@@ -2,24 +2,41 @@
 
 const logo = document.querySelector('.logo');
 
-const promise1 = new Promise((resolve, reject) => {
-  logo.addEventListener('click', () => {
-    resolve('Promise was resolved!');
+if (logo) {
+  const promise1 = new Promise((resolve, reject) => {
+    const handleClick = () => {
+      resolve('Promise was resolved!');
+
+      logo.removeEventListener('click', handleClick);
+    }
+
+    logo.addEventListener('click', handleClick);
   });
-});
 
-const promise2 = new Promise((resolve, reject) => {
-  setTimeout(() => {
-    reject(new Error('Promise was rejected!'));
-  }, 3000);
-});
+  const promise2 = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      reject(new Error('Promise was rejected!'));
+    }, 3000);
+  });
 
-promise1.then((result) => showMessage(result));
-promise2.catch((error) => showMessage(error.message, 'error'));
+  promise1
+    .then((result) => showMessage(result))
+    .catch((error) => showMessage(error.message, 'error'));
+
+  promise2
+    .then((result) => showMessage(result))
+    .catch((error) => showMessage(error.message, 'error'));
+}
 
 function showMessage(message, type) {
-  document.body.insertAdjacentHTML(
-    'beforeend',
-    `<div class="message ${type && `${type}-message`}">${message}</div>`,
-  );
+  const messageEl = document.createElement('div');
+  messageEl.className = 'message';
+
+  if (type) {
+    messageEl.classList.add(`${type}-message`);
+  }
+
+  messageEl.textContent = message;
+
+  document.body.append(messageEl);
 }
